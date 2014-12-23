@@ -44,6 +44,19 @@ int lua_cass_session_gc(lua_State* L)
 	return 0;
 }
 
+/**
+* Closes the session instance and waits for in-flight requests to finish.
+*/
+int lua_cass_session_close (lua_State* L)
+{
+	fprintf(stderr, "lua_cass_session_close\n");
+	CassSession* session = lua_session_get_ptr(L, 1);
+	CassFuture* future = cass_session_close(session);
+	cass_future_wait(future);
+	cass_future_free(future);
+	return 0;
+}
+
 /*int lua_cass_session_execute_query(lua_State* L)
 {
 	CassSession* session = lua_session_get_ptr(L, 1);

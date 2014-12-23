@@ -10,6 +10,7 @@ int lua_cass_session_new(lua_State* L);
 int lua_cass_session_tostring(lua_State* L);
 int lua_cass_session_gc(lua_State* L);
 //int lua_cass_session_execute_query(lua_State* L);
+int lua_cass_session_close(lua_State* L);
 
 
 #endif

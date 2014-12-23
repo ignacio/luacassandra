@@ -220,6 +220,7 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 	struct luaL_reg session_methods[] = {
 		{ "__tostring", lua_cass_session_tostring },
 		{ "__gc", lua_cass_session_gc },
+		{ "close", lua_cass_session_close },
 		//{ "execute_query", lua_cass_session_execute_query },
 
 		{ NULL, NULL }
