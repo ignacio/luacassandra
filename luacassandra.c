@@ -3,11 +3,9 @@
 #include "luacassandra.h"	// TODO: rename
 
 #include <cassandra.h>
+#include "cluster.h"
+#include "session.h"
 
-
-
-
-static CassSession* lua_session_get_ptr(lua_State* L, int index);
 
 
 /*
@@ -81,27 +79,6 @@ static void tableDump(lua_State *L, int idx, const char* text)
 }
 #endif
 
-/*
-** ===============================================================
-**   Exposed Lua API
-** ===============================================================
-*/
-
-// TODO: example somefunction, add more here
-int L_somefunction(lua_State *L)
-{
-	// TODO: add implementation
-	lua_getglobal(L, "print");
-	lua_pushstring(L, "Now running somefunction...");
-	lua_call(L, 1, 0);
-
-#ifndef NDEBUG
-	stackDump(L, "stack from somefunction()");
-#endif
-
-	return 0;	// number of return values on the Lua stack
-};
-
 
 static int create_metatable (lua_State* L, const char* name, const luaL_reg* methods)
 {
@@ -121,156 +98,6 @@ static int create_metatable (lua_State* L, const char* name, const luaL_reg* met
 }
 
 
-int lua_handle_error(lua_State* L, CassError e)
-{
-	/*CASS_ERROR_MAP()
-	switch (e) {
-		case 
-	}*/
-	return 0;
-}
-
-int lua_push_future_error(lua_State* L, CassFuture* future)
-{
-	CassString message = cass_future_error_message(future);
-	lua_pushnil(L);
-	lua_pushlstring(L, message.data, message.length);
-	return 2;
-}
-
-/*
-Userdata on given position of the stack.
-*/
-static CassCluster* lua_cluster_get_ptr(lua_State* L, int index)
-{
-	CassCluster* cluster = *(CassCluster**)luaL_checkudata(L, index, "CassCluster");
-	return cluster;
-}
-
-int lua_cass_cluster_new (lua_State* L)
-{
-	fprintf(stderr, "lua_cass_cluster_new\n");
-	CassCluster* cluster = cass_cluster_new();
-	if (!cluster) {
-		return luaL_error(L, "cass_cluster_new call failed");
-	}
-	void* ptr = lua_newuserdata(L, sizeof(CassCluster*));
-	luaL_getmetatable(L, "CassCluster");
-	lua_setmetatable(L, -2);
-	memcpy(ptr, &((void*)cluster), sizeof(CassCluster*));
-
-	return 1;
-}
-
-int lua_cass_cluster_set_contact_points(lua_State* L)
-{
-	fprintf(stderr, "lua_cass_cluster_set_contact_points\n");
-	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
-	const char* contact_points = luaL_checkstring(L, 2);
-	CassError err = cass_cluster_set_contact_points(cluster, contact_points);
-	if (err == CASS_OK) {
-		lua_pushboolean(L, 1);
-	}
-	return lua_handle_error(L, err);
-}
-
-int lua_cass_cluster_set_port(lua_State* L)
-{
-	fprintf(stderr, "lua_cass_cluster_set_port\n");
-	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
-	lua_Integer port = luaL_checkinteger(L, 2);
-	CassError err = cass_cluster_set_port(cluster, port);
-	if (err == CASS_OK) {
-		lua_pushboolean(L, 1);
-	}
-	return lua_handle_error(L, err);
-}
-
-int lua_cass_connect_session(lua_State* L)
-{
-	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
-	CassSession* session = lua_session_get_ptr(L, 2);
-
-	CassFuture* future = cass_session_connect(session, cluster);
-
-	cass_future_wait(future);
-	CassError rc = cass_future_error_code(future);
-	if (rc == CASS_OK) {
-		lua_pushboolean(L, 1);
-		return 1;
-	}
-	int res = lua_push_future_error(L, future);
-	cass_future_free(future);
-	return res;
-}
-
-int lua_cass_cluster_tostring(lua_State* L)
-{
-	lua_pushstring(L, "a cluster!");
-	return 1;
-}
-
-int lua_cass_cluster_gc (lua_State* L)
-{
-	fprintf(stderr, "lua_cass_cluster_gc\n");
-	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
-	cass_cluster_free(cluster);
-	return 0;
-}
-
-
-
-
-
-
-
-
-/*
-Userdata on given position of the stack.
-*/
-static CassSession* lua_session_get_ptr(lua_State* L, int index)
-{
-	CassSession* session = *(CassSession**)luaL_checkudata(L, index, "CassSession");
-	return session;
-}
-
-int lua_cass_session_new(lua_State* L)
-{
-	fprintf(stderr, "lua_cass_cluster_new\n");
-	CassSession* session = cass_session_new();
-	if (!session) {
-		return luaL_error(L, "cass_session_new call failed");
-	}
-	void* ptr = lua_newuserdata(L, sizeof(CassSession*));
-	luaL_getmetatable(L, "CassSession");
-	lua_setmetatable(L, -2);
-	memcpy(ptr, &((void*)session), sizeof(CassSession*));
-
-	return 1;
-}
-
-int lua_cass_session_tostring(lua_State* L)
-{
-	lua_pushstring(L, "a session!");
-	return 1;
-}
-
-int lua_cass_session_gc(lua_State* L)
-{
-	fprintf(stderr, "lua_cass_session_gc\n");
-	CassSession* cluster = lua_session_get_ptr(L, 1);
-	cass_session_free(cluster);
-	return 0;
-}
-
-
-
-
-
-
-
-
-
 
 
 /*
@@ -282,11 +109,8 @@ int lua_cass_session_gc(lua_State* L)
 // Structure with all functions made available to Lua
 static const struct luaL_Reg LuaExportFunctions[] = {
 
-	// TODO: add functions from 'exposed Lua API' section above
-	{ "somefunction", L_somefunction },
 	{ "cass_cluster_new", lua_cass_cluster_new },
 	{ "cass_session_new", lua_cass_session_new },
-	
 
 	{NULL, NULL}  // last entry; list terminator
 };
@@ -299,10 +123,10 @@ static int L_openLib(lua_State *L) {
 
 
 	// TODO: add startup/initialization code
-	lua_getglobal(L, "print");
-	lua_pushstring(L, "Now initializing module 'required' as:");
-	lua_pushvalue(L, 1); // pos 1 on the stack contains the module name
-	lua_call(L, 2, 0);
+	//lua_getglobal(L, "print");
+	//lua_pushstring(L, "Now initializing module 'required' as:");
+	//lua_pushvalue(L, 1); // pos 1 on the stack contains the module name
+	//lua_call(L, 2, 0);
 
 
 
@@ -319,9 +143,9 @@ static int L_closeLib(lua_State *L) {
 
 
 	// TODO: add shutdown/cleanup code
-	lua_getglobal(L, "print");
-	lua_pushstring(L, "Now closing the Lua template library");
-	lua_call(L, 1, 0);
+	//lua_getglobal(L, "print");
+	//lua_pushstring(L, "Now closing the Lua template library");
+	//lua_call(L, 1, 0);
 
 
 
@@ -384,7 +208,7 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 		{ "__gc", lua_cass_cluster_gc },
 		{ "set_contact_points", lua_cass_cluster_set_contact_points },
 		{ "set_port", lua_cass_cluster_set_port },
-		{ "connect_session", lua_cass_connect_session },
+		{ "connect_session", lua_cass_cluster_connect_session },
 		
 		
 		{ NULL, NULL }
@@ -393,9 +217,7 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 	struct luaL_reg session_methods[] = {
 		{ "__tostring", lua_cass_session_tostring },
 		{ "__gc", lua_cass_session_gc },
-		//{ "set_contact_points", lua_cass_cluster_set_contact_points },
-		//{ "set_port", lua_cass_cluster_set_port },
-
+		//{ "execute_query", lua_cass_session_execute_query },
 
 		{ NULL, NULL }
 	};
@@ -414,6 +236,7 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 	luaL_setfuncs (L, LuaExportFunctions, 0);
 #endif
 
+	//cass_log_set_level(CASS_LOG_DEBUG);
 	
 	return 1;
 };
