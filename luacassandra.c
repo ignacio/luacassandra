@@ -7,6 +7,7 @@
 #include "session.h"
 #include "schema.h"
 #include "schema_meta.h"
+#include "statement.h"
 
 
 
@@ -113,6 +114,7 @@ static const struct luaL_Reg LuaExportFunctions[] = {
 
 	{ "cass_cluster_new", lua_cass_cluster_new },
 	{ "cass_session_new", lua_cass_session_new },
+	{ "cass_statement_new", lua_cass_statement_new },
 
 	{NULL, NULL}  // last entry; list terminator
 };
@@ -218,6 +220,10 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 
 	create_metatable(L, "CassSchemaMeta", get_schema_meta_exported_methods());
 	lua_pop(L, 1);
+
+	create_metatable(L, "CassStatement", get_statement_exported_methods());
+	lua_pop(L, 1);
+
 
 	// Export Lua API
 	lua_newtable(L);

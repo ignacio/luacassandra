@@ -4,6 +4,8 @@
 
 #include "session.h"
 #include "schema.h"
+#include "statement.h"
+#include "utils.h"
 
 
 
@@ -67,6 +69,48 @@ int lua_cass_session_close (lua_State* L)
 	return 0;
 }
 
+int lua_cass_session_execute(lua_State* L)
+{
+	CassSession* session = lua_session_get_ptr(L, 1);
+	CassStatement* statement = lua_statement_get_ptr(L, 2);
+
+	CassFuture* future = cass_session_execute(session, statement);
+	cass_future_wait(future);
+
+	CassError rc = cass_future_error_code(future);
+	if (rc != CASS_OK) {
+		int num = lua_cass_push_future_error(L, future);
+		cass_future_free(future);
+		return num;
+	}
+
+	const CassResult* result = cass_future_get_result(future);
+	CassIterator* iterator = cass_iterator_from_result(result);
+
+	// TODO: devolver un iterador
+	int i = 0;
+	if (cass_iterator_next(iterator)) {
+		lua_newtable(L);
+		int table = lua_gettop(L);
+		while (cass_iterator_next(iterator)) {
+			const CassRow* row = cass_iterator_get_row(iterator);
+			lua_cass_value_to_lua(L, cass_row_get_column(row, 1));
+			lua_rawseti(L, table, ++i);
+			
+			//cass_value_get_bool(cass_row_get_column(row, 1), &basic->bln);
+			//cass_value_get_double(cass_row_get_column(row, 2), &basic->dbl);
+			//cass_value_get_float(cass_row_get_column(row, 3), &basic->flt);
+			//cass_value_get_int32(cass_row_get_column(row, 4), &basic->i32);
+			//cass_value_get_int64(cass_row_get_column(row, 5), &basic->i64);
+		}
+	}
+	cass_result_free(result);
+	cass_iterator_free(iterator);
+
+	cass_future_free(future);
+	return 1;
+}
+
 /*int lua_cass_session_execute_query(lua_State* L)
 {
 	CassSession* session = lua_session_get_ptr(L, 1);
@@ -92,6 +136,7 @@ struct luaL_reg* get_session_exported_methods()
 		{ "__gc", lua_cass_session_gc },
 		{ "get_schema", lua_cass_session_get_schema },
 		{ "close", lua_cass_session_close },
+		{ "execute", lua_cass_session_execute },
 		{ NULL, NULL }
 	};
 

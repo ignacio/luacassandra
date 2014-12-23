@@ -25,11 +25,14 @@ print("columnfamily_name ->", meta_camp:get_field_value("columnfamily_name"))
 
 --meta:test()
 
-meta_camp:test()
+--meta_camp:test()
+
+statement = lc.cass_statement_new([[SELECT * FROM "Users"]])
+res = assert(session:execute(statement))
 
 --session:close()
 
 
 repl.start("> ")
 
---process:loop()
+process:loop()

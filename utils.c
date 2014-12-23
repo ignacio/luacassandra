@@ -60,6 +60,12 @@ int lua_cass_value_to_lua (lua_State* L, const CassValue* value)
 		//printf("\"%.*s\"", (int)s.length, s.data);
 		break;
 
+	case CASS_VALUE_TYPE_BLOB: {
+		CassBytes bytes;
+		cass_value_get_bytes(value, &bytes);
+		lua_pushlstring(L, bytes.data, bytes.size);
+	break; }
+
 	case CASS_VALUE_TYPE_UUID:
 		cass_value_get_uuid(value, &u);
 		cass_uuid_string(u, us);
