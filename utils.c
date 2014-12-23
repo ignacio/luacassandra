@@ -6,16 +6,15 @@
 
 
 
-int lua_handle_error(lua_State* L, CassError e)
+int lua_cass_push_error(lua_State* L, CassError e)
 {
-	/*CASS_ERROR_MAP()
-	switch (e) {
-	case
-	}*/
-	return 0;
+	const char* err_str = cass_error_desc(e);
+	lua_pushnil(L);
+	lua_pushstring(L, err_str);
+	return 2;
 }
 
-int lua_push_future_error(lua_State* L, CassFuture* future)
+int lua_cass_push_future_error (lua_State* L, CassFuture* future)
 {
 	CassString message = cass_future_error_message(future);
 	lua_pushnil(L);
