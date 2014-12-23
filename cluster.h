@@ -11,5 +11,6 @@ int lua_cass_cluster_set_port(lua_State* L);
 int lua_cass_cluster_connect_session(lua_State* L);
 int lua_cass_cluster_tostring(lua_State* L);
 int lua_cass_cluster_gc(lua_State* L);
+int lua_cass_cluster_set_protocol_version(lua_State* L);
 
 #endif

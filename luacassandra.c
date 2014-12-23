@@ -209,6 +209,8 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 		{ "set_contact_points", lua_cass_cluster_set_contact_points },
 		{ "set_port", lua_cass_cluster_set_port },
 		{ "connect_session", lua_cass_cluster_connect_session },
+		{ "set_protocol_version", lua_cass_cluster_set_protocol_version },
+		
 		
 		
 		{ NULL, NULL }

@@ -43,7 +43,7 @@ int lua_cass_cluster_set_contact_points(lua_State* L)
 	if (err == CASS_OK) {
 		lua_pushboolean(L, 1);
 	}
-	return lua_handle_error(L, err);
+	return lua_cass_push_error(L, err);
 }
 
 int lua_cass_cluster_set_port(lua_State* L)
@@ -55,7 +55,7 @@ int lua_cass_cluster_set_port(lua_State* L)
 	if (err == CASS_OK) {
 		lua_pushboolean(L, 1);
 	}
-	return lua_handle_error(L, err);
+	return lua_cass_push_error(L, err);
 }
 
 int lua_cass_cluster_connect_session(lua_State* L)
@@ -72,7 +72,7 @@ int lua_cass_cluster_connect_session(lua_State* L)
 		lua_pushboolean(L, 1);
 		return 1;
 	}
-	int res = lua_push_future_error(L, future);
+	int res = lua_cass_push_future_error(L, future);
 	cass_future_free(future);
 	return res;
 }
@@ -91,3 +91,14 @@ int lua_cass_cluster_gc (lua_State* L)
 	return 0;
 }
 
+int lua_cass_cluster_set_protocol_version(lua_State* L)
+{
+	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
+	lua_Integer protocol_ver = luaL_checkinteger(L, 2);
+	CassError err = cass_cluster_set_protocol_version(cluster, protocol_ver);
+	if (err == CASS_OK) {
+		lua_pushboolean(L, 1);
+		return 1;
+	}
+	return lua_cass_push_error(L, err);
+}
