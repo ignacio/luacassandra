@@ -29,8 +29,6 @@ int lua_cass_cluster_new (lua_State* L)
 	lua_setmetatable(L, -2);
 	memcpy(ptr, &((void*)cluster), sizeof(CassCluster*));
 
-	cass_cluster_set_protocol_version(cluster, 1);
-
 	return 1;
 }
 
