@@ -139,12 +139,14 @@
   <ItemGroup>
     <ClCompile Include="cluster.c" />
     <ClCompile Include="luacassandra.c" />
+    <ClCompile Include="schema.c" />
     <ClCompile Include="session.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cluster.h" />
     <ClInclude Include="luacassandra.h" />
+    <ClInclude Include="schema.h" />
     <ClInclude Include="session.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

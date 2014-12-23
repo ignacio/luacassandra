@@ -120,3 +120,22 @@ int lua_cass_cluster_set_protocol_version(lua_State* L)
 	}
 	return lua_cass_push_error(L, err);
 }
+
+
+
+
+struct luaL_reg* get_cluster_exported_methods()
+{
+	static struct luaL_reg methods[] = {
+		{ "__tostring", lua_cass_cluster_tostring },
+		{ "__gc", lua_cass_cluster_gc },
+		{ "set_contact_points", lua_cass_cluster_set_contact_points },
+		{ "set_port", lua_cass_cluster_set_port },
+		{ "connect_session", lua_cass_cluster_connect_session },
+		{ "connect_session_keyspace", lua_cass_cluster_connect_session_keyspace },
+		{ "set_protocol_version", lua_cass_cluster_set_protocol_version },
+		{ NULL, NULL }
+	};
+
+	return methods;
+}

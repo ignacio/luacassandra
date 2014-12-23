@@ -72,3 +72,17 @@ int lua_cass_session_close (lua_State* L)
 	}
 }*/
 
+
+
+
+struct luaL_reg* get_session_exported_methods()
+{
+	static struct luaL_reg methods[] = {
+		{ "__tostring", lua_cass_session_tostring },
+		{ "__gc", lua_cass_session_gc },
+		{ "close", lua_cass_session_close },
+		{ NULL, NULL }
+	};
+
+	return methods;
+}

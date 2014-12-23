@@ -13,4 +13,6 @@ int lua_cass_session_gc(lua_State* L);
 int lua_cass_session_close(lua_State* L);
 
 
+struct luaL_reg* get_session_exported_methods();
+
 #endif

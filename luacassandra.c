@@ -5,6 +5,7 @@
 #include <cassandra.h>
 #include "cluster.h"
 #include "session.h"
+#include "schema.h"
 
 
 
@@ -200,36 +201,18 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 	// Setup a userdata with metatable to create a close method
 	L_setupClose(L);
 
-	if (L_openLib(L) == 0)  // call initialization code
+	if (L_openLib(L) == 0) {  // call initialization code
 		L_openFailed(L);    // Init failed, so cleanup, will not return
+	}
 
-	struct luaL_reg cluster_methods[] = {
-		{ "__tostring", lua_cass_cluster_tostring },
-		{ "__gc", lua_cass_cluster_gc },
-		{ "set_contact_points", lua_cass_cluster_set_contact_points },
-		{ "set_port", lua_cass_cluster_set_port },
-		{ "connect_session", lua_cass_cluster_connect_session },
-		{ "connect_session_keyspace", lua_cass_cluster_connect_session_keyspace },
-		{ "set_protocol_version", lua_cass_cluster_set_protocol_version },
-		
-		
-		
-		{ NULL, NULL }
-	};
 
-	struct luaL_reg session_methods[] = {
-		{ "__tostring", lua_cass_session_tostring },
-		{ "__gc", lua_cass_session_gc },
-		{ "close", lua_cass_session_close },
-		//{ "execute_query", lua_cass_session_execute_query },
-
-		{ NULL, NULL }
-	};
-
-	create_metatable(L, "CassCluster", cluster_methods);
+	create_metatable(L, "CassCluster", get_cluster_exported_methods());
 	lua_pop(L, 1);
 
-	create_metatable(L, "CassSession", session_methods);
+	create_metatable(L, "CassSession", get_session_exported_methods());
+	lua_pop(L, 1);
+
+	create_metatable(L, "CassSchema", get_schema_exported_methods());
 	lua_pop(L, 1);
 
 	// Export Lua API
