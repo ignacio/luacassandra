@@ -140,6 +140,7 @@
     <ClCompile Include="cluster.c" />
     <ClCompile Include="luacassandra.c" />
     <ClCompile Include="schema.c" />
+    <ClCompile Include="schema_meta.c" />
     <ClCompile Include="session.c" />
     <ClCompile Include="utils.c" />
   </ItemGroup>
@@ -147,6 +148,7 @@
     <ClInclude Include="cluster.h" />
     <ClInclude Include="luacassandra.h" />
     <ClInclude Include="schema.h" />
+    <ClInclude Include="schema_meta.h" />
     <ClInclude Include="session.h" />
     <ClInclude Include="utils.h" />
   </ItemGroup>

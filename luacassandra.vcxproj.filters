@@ -30,6 +30,9 @@
     <ClCompile Include="schema.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="schema_meta.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="luacassandra.h">
@@ -45,6 +48,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="schema.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="schema_meta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

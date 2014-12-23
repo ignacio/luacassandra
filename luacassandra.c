@@ -6,6 +6,7 @@
 #include "cluster.h"
 #include "session.h"
 #include "schema.h"
+#include "schema_meta.h"
 
 
 
@@ -213,6 +214,9 @@ LTLIB_EXPORTAPI	int LTLIB_OPENFUNC (lua_State *L){
 	lua_pop(L, 1);
 
 	create_metatable(L, "CassSchema", get_schema_exported_methods());
+	lua_pop(L, 1);
+
+	create_metatable(L, "CassSchemaMeta", get_schema_meta_exported_methods());
 	lua_pop(L, 1);
 
 	// Export Lua API

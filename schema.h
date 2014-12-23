@@ -6,6 +6,8 @@
 
 CassSchema* lua_schema_get_ptr (lua_State* L, int index);
 
+int lua_cass_push_schema(lua_State* L, const CassSchema* schema);
+
 int lua_cass_schema_new(lua_State* L);
 int lua_cass_schema_tostring(lua_State* L);
 int lua_cass_schema_gc(lua_State* L);

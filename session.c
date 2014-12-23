@@ -3,6 +3,7 @@
 #include "luacassandra.h"	// TODO: rename
 
 #include "session.h"
+#include "schema.h"
 
 
 
@@ -44,6 +45,15 @@ int lua_cass_session_gc(lua_State* L)
 	return 0;
 }
 
+int lua_cass_session_get_schema(lua_State* L)
+{
+	CassSession* session = lua_session_get_ptr(L, 1);
+	const CassSchema* schema = cass_session_get_schema(session);
+
+	return lua_cass_push_schema(L, schema);
+}
+
+
 /**
 * Closes the session instance and waits for in-flight requests to finish.
 */
@@ -80,6 +90,7 @@ struct luaL_reg* get_session_exported_methods()
 	static struct luaL_reg methods[] = {
 		{ "__tostring", lua_cass_session_tostring },
 		{ "__gc", lua_cass_session_gc },
+		{ "get_schema", lua_cass_session_get_schema },
 		{ "close", lua_cass_session_close },
 		{ NULL, NULL }
 	};
