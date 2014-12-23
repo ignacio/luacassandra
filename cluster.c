@@ -75,6 +75,26 @@ int lua_cass_cluster_connect_session(lua_State* L)
 	return res;
 }
 
+int lua_cass_cluster_connect_session_keyspace(lua_State* L)
+{
+	fprintf(stderr, "lua_cass_cluster_connect_session_keyspace\n");
+	CassCluster* cluster = lua_cluster_get_ptr(L, 1);
+	CassSession* session = lua_session_get_ptr(L, 2);
+	const char* keyspace = luaL_checkstring(L, 3);
+
+	CassFuture* future = cass_session_connect_keyspace(session, cluster, keyspace);
+
+	cass_future_wait(future);
+	CassError rc = cass_future_error_code(future);
+	if (rc == CASS_OK) {
+		lua_pushboolean(L, 1);
+		return 1;
+	}
+	int res = lua_cass_push_future_error(L, future);
+	cass_future_free(future);
+	return res;
+}
+
 int lua_cass_cluster_tostring(lua_State* L)
 {
 	lua_pushstring(L, "a cluster!");
