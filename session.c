@@ -6,6 +6,7 @@
 #include "schema.h"
 #include "statement.h"
 #include "utils.h"
+#include <malloc.h>
 
 
 
@@ -69,6 +70,11 @@ int lua_cass_session_close (lua_State* L)
 	return 0;
 }
 
+/**
+* Executes a statement on a given session. Currently builds an array of rows.
+* That will hopefully change.
+* Also, I may expose the iterator instead, so you can go crazy in Lua-land.
+*/
 int lua_cass_session_execute(lua_State* L)
 {
 	CassSession* session = lua_session_get_ptr(L, 1);
@@ -85,46 +91,52 @@ int lua_cass_session_execute(lua_State* L)
 	}
 
 	const CassResult* result = cass_future_get_result(future);
+	cass_future_free(future);
 	CassIterator* iterator = cass_iterator_from_result(result);
 
-	// TODO: devolver un iterador
+	// TODO: devolver un iterador ?
+	int row_count = cass_result_row_count(result);
+	int column_count = cass_result_column_count(result);
+
 	int i = 0;
-	if (cass_iterator_next(iterator)) {
+	lua_newtable(L);
+	int rows_table = lua_gettop(L);
+
+	/* iterate over rows */
+	while (cass_iterator_next(iterator)) {
+		const CassRow* row = cass_iterator_get_row(iterator);
+		
 		lua_newtable(L);
-		int table = lua_gettop(L);
-		while (cass_iterator_next(iterator)) {
-			const CassRow* row = cass_iterator_get_row(iterator);
-			lua_cass_value_to_lua(L, cass_row_get_column(row, 1));
-			lua_rawseti(L, table, ++i);
+		int columns_table = lua_gettop(L);
+		/* loop over columns */
+		for (int j = 0; j < column_count; ++j) {
+			CassString name = cass_result_column_name(result, j);
+			lua_pushlstring(L, name.data, name.length);
+			lua_cass_value_to_lua(L, cass_row_get_column(row, j));
 			
-			//cass_value_get_bool(cass_row_get_column(row, 1), &basic->bln);
-			//cass_value_get_double(cass_row_get_column(row, 2), &basic->dbl);
-			//cass_value_get_float(cass_row_get_column(row, 3), &basic->flt);
-			//cass_value_get_int32(cass_row_get_column(row, 4), &basic->i32);
-			//cass_value_get_int64(cass_row_get_column(row, 5), &basic->i64);
+			lua_settable(L, columns_table);
+			//lua_rawseti(L, columns_table, j + 1);
 		}
+		
+		/*int j = 0;
+		CassIterator* it_columns = cass_iterator_from_row(row);
+		while (cass_iterator_next(it_columns)) {
+			const CassValue* column = cass_iterator_get_column(it_columns);
+			
+			CassString name = cass_result_column_name(result, j);
+			lua_pushlstring(L, name.data, name.length);
+			lua_cass_value_to_lua(L, column);
+			lua_settable(L, columns_table);
+			j++;
+		}*/
+		lua_rawseti(L, rows_table, ++i);
 	}
+	
 	cass_result_free(result);
 	cass_iterator_free(iterator);
 
-	cass_future_free(future);
 	return 1;
 }
-
-/*int lua_cass_session_execute_query(lua_State* L)
-{
-	CassSession* session = lua_session_get_ptr(L, 1);
-	const char* query = luaL_checkstring(L, 2);
-	CassStatement* statement = cass_statement_new(cass_string_init(query), 0);
-
-	CassFuture* future = cass_session_execute(session, statement);
-	cass_future_wait(future);
-
-	CassError rc = cass_future_error_code(future);
-	if (rc == CASS_OK) {
-
-	}
-}*/
 
 
 
