@@ -55,7 +55,7 @@
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
     <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)</OutDir>
-    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_Dbg|Win32'">$(SolutionDir)</OutDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release_Dbg|Win32'">$(SolutionDir)/../../</OutDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
     <IntDir Condition="'$(Configuration)|$(Platform)'=='Release_Dbg|Win32'">$(Configuration)\</IntDir>
     <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
@@ -129,7 +129,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <SubSystem>Windows</SubSystem>
+      <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <TargetMachine>MachineX86</TargetMachine>
@@ -137,28 +137,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="cluster.c" />
-    <ClCompile Include="luacassandra.c" />
-    <ClCompile Include="schema.c" />
-    <ClCompile Include="schema_meta.c" />
-    <ClCompile Include="session.c" />
-    <ClCompile Include="statement.c" />
-    <ClCompile Include="utils.c" />
+    <ClCompile Include="../../src/cluster.c" />
+    <ClCompile Include="../../src/luacassandra.c" />
+    <ClCompile Include="../../src/schema.c" />
+    <ClCompile Include="../../src/schema_meta.c" />
+    <ClCompile Include="../../src/session.c" />
+    <ClCompile Include="../../src/statement.c" />
+    <ClCompile Include="../../src/utils.c" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cluster.h" />
-    <ClInclude Include="luacassandra.h" />
-    <ClInclude Include="schema.h" />
-    <ClInclude Include="schema_meta.h" />
-    <ClInclude Include="session.h" />
-    <ClInclude Include="statement.h" />
-    <ClInclude Include="utils.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme.md" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="luacassandra-scm-1.rockspec" />
+    <ClInclude Include="../../src/cluster.h" />
+    <ClInclude Include="../../src/luacassandra.h" />
+    <ClInclude Include="../../src/schema.h" />
+    <ClInclude Include="../../src/schema_meta.h" />
+    <ClInclude Include="../../src/session.h" />
+    <ClInclude Include="../../src/statement.h" />
+    <ClInclude Include="../../src/utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

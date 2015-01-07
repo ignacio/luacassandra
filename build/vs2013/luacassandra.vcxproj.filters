@@ -15,57 +15,49 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="luacassandra.c">
+    <ClCompile Include="../../src/luacassandra.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="cluster.c">
+    <ClCompile Include="../../src/cluster.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="session.c">
+    <ClCompile Include="../../src/session.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="utils.c">
+    <ClCompile Include="../../src/utils.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="schema.c">
+    <ClCompile Include="../../src/schema.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="schema_meta.c">
+    <ClCompile Include="../../src/schema_meta.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="statement.c">
+    <ClCompile Include="../../src/statement.c">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="luacassandra.h">
+    <ClInclude Include="../../src/luacassandra.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="cluster.h">
+    <ClInclude Include="../../src/cluster.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="session.h">
+    <ClInclude Include="../../src/session.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="utils.h">
+    <ClInclude Include="../../src/utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="schema.h">
+    <ClInclude Include="../../src/schema.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="schema_meta.h">
+    <ClInclude Include="../../src/schema_meta.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="statement.h">
+    <ClInclude Include="../../src/statement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="readme.md">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="luacassandra-scm-1.rockspec">
-      <Filter>Resource Files</Filter>
-    </None>
   </ItemGroup>
 </Project>
